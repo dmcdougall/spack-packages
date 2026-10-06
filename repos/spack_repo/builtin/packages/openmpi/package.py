@@ -652,6 +652,13 @@ class Openmpi(AutotoolsPackage, CudaPackage, ROCmPackage):
     variant("internal-hwloc", default=False, description="Use internal hwloc")
     variant("internal-pmix", default=False, description="Use internal pmix and prrte", when="@3:")
     variant("internal-libevent", default=False, description="Use internal libevent")
+    variant(
+        "ob1",
+        default=True,
+        when="@5:",
+        description="Build the ob1 PML (BTL-based point-to-point). Disable for a "
+        "UCX/accelerator-only build; note this removes the CPU/BTL fallback PML.",
+    )
     variant("openshmem", default=False, description="Enable building OpenSHMEM")
     variant("debug", default=False, description="Make debug build", when="build_system=autotools")
 
@@ -1192,6 +1199,10 @@ with '-Wl,-commons,use_dylibs' and without
         # Remove ssh/rsh pml
         if spec.satisfies("~rsh"):
             config_args.append("--enable-mca-no-build=plm-rsh")
+
+        # Allow a UCX-only build with no ob1 (BTL-based) PML
+        if spec.satisfies("~ob1"):
+            config_args.append("--enable-mca-no-build=pml-ob1")
 
         # Useful for ssh-based environments
         # For v4 and lower
