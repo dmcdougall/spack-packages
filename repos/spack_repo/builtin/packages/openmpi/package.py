@@ -1192,17 +1192,19 @@ with '-Wl,-commons,use_dylibs' and without
 
         config_args.extend(self.enable_or_disable("static"))
 
+        mca_no_build_args = []
+
         if spec.satisfies("@4.0.0:4.0.2"):
             # uct btl doesn't work with some UCX versions so just disable
-            config_args.append("--enable-mca-no-build=btl-uct")
+            mca_no_build_args.append("btl-uct")
 
         # Remove ssh/rsh pml
         if spec.satisfies("~rsh"):
-            config_args.append("--enable-mca-no-build=plm-rsh")
+            mca_no_build_args.append("plm-rsh")
 
         # Allow a UCX-only build with no ob1 (BTL-based) PML
         if spec.satisfies("~ob1"):
-            config_args.append("--enable-mca-no-build=pml-ob1")
+            mca_no_build_args.append("pml-ob1")
 
         # Useful for ssh-based environments
         # For v4 and lower
@@ -1321,9 +1323,14 @@ with '-Wl,-commons,use_dylibs' and without
                 )
             if spec.satisfies("@1.7.2"):
                 # There was a bug in 1.7.2 when --enable-static is used
-                config_args.append("--enable-mca-no-build=pml-bfo")
+                mca_no_build_args.append("pml-bfo")
         elif spec.satisfies("@1.7:"):
             config_args.append("--without-cuda")
+
+        # We're done appending to the --enable-mca-no-build option, collapse it into a
+        # comma-separated list and ship it
+        if len(mca_no_build_args) > 0:
+            config.args.append(f"--enable-mca-no-build={','.join(mca_no_build_args)}")
 
         # ROCm support
         # See https://docs.open-mpi.org/en/v5.0.x/tuning-apps/networking/rocm.html
