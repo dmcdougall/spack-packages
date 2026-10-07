@@ -1329,7 +1329,7 @@ with '-Wl,-commons,use_dylibs' and without
 
         # We're done appending to the --enable-mca-no-build option, collapse it into a
         # comma-separated list and ship it
-        if len(mca_no_build_args) > 0:
+        if mca_no_build_args:
             config.args.append(f"--enable-mca-no-build={','.join(mca_no_build_args)}")
 
         # ROCm support
