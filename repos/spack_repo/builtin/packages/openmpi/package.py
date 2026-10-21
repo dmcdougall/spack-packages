@@ -1330,7 +1330,7 @@ with '-Wl,-commons,use_dylibs' and without
         # We're done appending to the --enable-mca-no-build option, collapse it into a
         # comma-separated list and ship it
         if mca_no_build_args:
-            config.args.append(f"--enable-mca-no-build={','.join(mca_no_build_args)}")
+            config_args.append(f"--enable-mca-no-build={','.join(mca_no_build_args)}")
 
         # ROCm support
         # See https://docs.open-mpi.org/en/v5.0.x/tuning-apps/networking/rocm.html
